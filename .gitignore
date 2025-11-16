@@ -1,0 +1,6 @@
+.vs/
+*.vsidx
+out/
+build/
+bin/
+models/
