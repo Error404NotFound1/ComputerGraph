@@ -22,6 +22,18 @@ namespace cg
         m_initialized = true;
     }
 
+    void GlfwContext::setMSAASamples(int samples)
+    {
+        if (!m_initialized)
+        {
+            return;
+        }
+
+        // Set MSAA samples hint (must be called before window creation)
+        glfwWindowHint(GLFW_SAMPLES, samples);
+        m_msaaSamples = samples;
+    }
+
     GlfwContext::~GlfwContext()
     {
         if (m_initialized)

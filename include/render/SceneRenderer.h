@@ -6,6 +6,7 @@
 
 #include <glm/glm.hpp>
 #include <memory>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
@@ -20,7 +21,7 @@ namespace cg
         glm::mat4 transform{1.0f};
         unsigned texture{0};
         bool textured{false};
-			std::string name;
+        std::string name;
     };
 
     struct EnvironmentSettings
@@ -34,9 +35,24 @@ namespace cg
         float fogFar{25000.0f};
     };
 
+    struct MaterialFeatureToggles
+    {
+        bool flagpoleMetal{false};
+        bool missileMetal{false};
+        bool groundTriplanar{false};
+        bool flagAnisotropic{false};
+    };
+
     class SceneRenderer
     {
     public:
+        struct LanternLight
+        {
+            glm::vec3 position{0.0f};
+            glm::vec3 color{1.0f};
+            float intensity{1.0f};
+            float radius{1000.0f};
+        };
         SceneRenderer(const Scene& scene);
         ~SceneRenderer();
 
@@ -45,7 +61,13 @@ namespace cg
 
         void draw(const Camera& camera, float aspectRatio);
         void setEnvironmentBlend(float blend);
-			bool setMeshTransformByName(const std::string& name, const glm::mat4& transform);
+        bool setMeshTransformByName(const std::string& name, const glm::mat4& transform);
+        bool updateMeshVerticesByName(const std::string& name, const std::vector<Vertex>& vertices);
+        void setTextureAnisotropyLevel(float level);  // Set anisotropic filtering level for new textures
+        void setTextureQualityDistances(float nearDist, float farDist, float minFactor);  // Set distance-based quality parameters
+        void setAdvancedMaterialToggles(const MaterialFeatureToggles& toggles);
+        void setEnvironmentMaps(unsigned dayTexture, unsigned nightTexture);
+        void setLanternLights(const std::vector<LanternLight>& lights);
 
     private:
         std::vector<GpuMesh> m_meshes;
@@ -54,9 +76,24 @@ namespace cg
         EnvironmentSettings m_nightEnvironment{};
         float m_environmentBlend{0.0f};
         std::unordered_map<std::string, unsigned> m_textureCache;
+        float m_textureAnisotropyLevel{16.0f};  // Anisotropic filtering level
+        
+        // Distance-based texture quality parameters
+        float m_textureQualityNearDistance{5000.0f};
+        float m_textureQualityFarDistance{25000.0f};
+        float m_textureQualityMinFactor{0.3f};
+
+        MaterialFeatureToggles m_materialToggles{};
+        unsigned m_environmentMapDay{0};
+        unsigned m_environmentMapNight{0};
+        std::vector<LanternLight> m_lanternLights;
 
         void buildFromScene(const Scene& scene);
         unsigned loadTexture(const std::string& path);
+        void loadTexturesParallel(const std::vector<std::string>& texturePaths);  // Multi-threaded texture loading
+        int determineMaterialMode(const GpuMesh& mesh) const;
+        bool isGroundMesh(const GpuMesh& mesh) const;
+        bool hasEnvironmentMaps() const { return m_environmentMapDay != 0 && m_environmentMapNight != 0; }
     };
 } // namespace cg
 

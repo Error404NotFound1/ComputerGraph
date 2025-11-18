@@ -32,6 +32,12 @@ namespace cg
         m_yaw = glm::degrees(atan2f(dir.z, dir.x));
     }
 
+    void Camera::setRotation(float yaw, float pitch)
+    {
+        m_yaw = yaw;
+        m_pitch = glm::clamp(pitch, -89.0f, 89.0f);
+    }
+
     glm::mat4 Camera::viewMatrix() const
     {
         return glm::lookAt(m_position, m_position + forward(), up());
@@ -39,7 +45,17 @@ namespace cg
 
     glm::mat4 Camera::projectionMatrix(float aspect) const
     {
-        return glm::perspective(glm::radians(45.0f), aspect, 0.1f, 30000.0f);
+        return glm::perspective(glm::radians(m_fov), aspect, 0.1f, 30000.0f);
+    }
+
+    void Camera::setFOV(float fov)
+    {
+        m_fov = glm::clamp(fov, 10.0f, 120.0f);  // Clamp FOV to reasonable range
+    }
+
+    float Camera::fov() const
+    {
+        return m_fov;
     }
 
     glm::vec3 Camera::position() const
@@ -68,6 +84,16 @@ namespace cg
     glm::vec3 Camera::up() const
     {
         return glm::normalize(glm::cross(right(), forward()));
+    }
+
+    float Camera::yaw() const
+    {
+        return m_yaw;
+    }
+
+    float Camera::pitch() const
+    {
+        return m_pitch;
     }
 } // namespace cg
 

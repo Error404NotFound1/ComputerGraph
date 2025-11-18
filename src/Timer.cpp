@@ -14,5 +14,10 @@ namespace cg
         m_last = now;
         return delta.count();
     }
+
+    void Timer::reset()
+    {
+        m_last = std::chrono::steady_clock::now();
+    }
 } // namespace cg
 

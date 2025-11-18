@@ -5,6 +5,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <stdexcept>
+#include <string>
 
 namespace
 {
@@ -27,6 +28,25 @@ namespace cg
         {
             throw std::runtime_error("Failed to initialize GLAD");
         }
+
+        // Enable MSAA if available
+        int samples = 0;
+        glGetIntegerv(GL_SAMPLES, &samples);
+        if (samples > 0)
+        {
+            glEnable(GL_MULTISAMPLE);
+            log(LogLevel::Info, "Multisampling enabled with " + std::to_string(samples) + " samples");
+        }
+        else
+        {
+            log(LogLevel::Info, "Multisampling not available or disabled");
+        }
+
+        // Enable smooth line and polygon rendering for better antialiasing
+        glEnable(GL_LINE_SMOOTH);
+        glEnable(GL_POLYGON_SMOOTH);
+        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
 
         glfwSwapInterval(enableVSync ? 1 : 0);
 

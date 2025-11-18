@@ -137,9 +137,12 @@ namespace cg
         glDepthFunc(GL_LEQUAL);
         glDepthMask(GL_FALSE);
 
-        m_shader->bind();
-        const glm::mat4 viewRotation = glm::mat4(glm::mat3(camera.viewMatrix()));
-        m_shader->setMat4("uView", viewRotation);
+    m_shader->bind();
+    // Use only the rotation part of the camera view (no translation)
+    glm::mat4 viewRotation = glm::mat4(glm::mat3(camera.viewMatrix()));
+    // Rotate the whole skybox by 180 degrees around Y axis so the sky orientation flips
+    const glm::mat4 skyRotation = glm::rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    m_shader->setMat4("uView", viewRotation * skyRotation);
 		m_shader->setMat4("uProj", camera.projectionMatrix(aspectRatio));
 		const float clampedBlend = glm::clamp(blend, 0.0f, 1.0f);
 		m_shader->setFloat("uBlend", clampedBlend);

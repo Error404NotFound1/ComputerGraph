@@ -12,6 +12,7 @@ uniform mat4 uProj;
 out VS_OUT
 {
     vec3 worldPos;
+    vec3 modelPos;  // Model space position for lantern gradient
     vec3 normal;
     vec3 color;
     vec2 uv;
@@ -21,8 +22,11 @@ void main()
 {
     vec4 world = uModel * vec4(aPosition, 1.0);
     vs_out.worldPos = world.xyz;
+    vs_out.modelPos = aPosition;  // Model space position (before transformation)
     vs_out.normal = mat3(transpose(inverse(uModel))) * aNormal;
     vs_out.color = aColor;
+    // Ensure high precision for texture coordinates to prevent artifacts
+    // Using highp precision (automatic in most cases) ensures proper interpolation
     vs_out.uv = aTexCoord;
     gl_Position = uProj * uView * world;
 }

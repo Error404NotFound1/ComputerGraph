@@ -14,11 +14,16 @@ set(SOURCES
     src/Window.cpp
     src/Camera.cpp
     src/Scene.cpp
-    src/DemoSceneBuilder.cpp
     src/SceneRenderer.cpp
     src/SkyboxRenderer.cpp
     src/Shader.cpp
+    src/TextRenderer.cpp
     src/FileSystem.cpp
+    src/MeshUtils.cpp
+    src/FlagGenerator.cpp
+    src/ParticleSystem.cpp
+    src/GroundBuilder.cpp
+    src/ObjLoader.cpp
     third_party/tinyexr/miniz.c
     lib/glad/src/glad.c
 )
