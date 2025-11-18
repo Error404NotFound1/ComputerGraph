@@ -1085,18 +1085,10 @@ namespace cg
             const double timeSinceMissileDrop = m_totalTime - m_missileSpawnTime;
             if (timeSinceMissileDrop >= static_cast<double>(m_config.missileCameraTrackDelay))
             {
-                // Camera follows missile, looking in the direction of movement
-                const glm::vec3 forwardDir = glm::normalize(m_missileVelocity);
-                
-                // Calculate camera position - behind missile with configurable offset
-                glm::vec3 cameraPos = m_missilePosition - forwardDir * m_config.missileCameraDistance + 
-                                     glm::vec3(0.0f, m_config.missileCameraHeight, 0.0f);
-                
-                // Look ahead in the direction of movement
-                glm::vec3 lookTarget = m_missilePosition + forwardDir * m_config.missileCameraLookAhead;
-                
-                m_camera.setPosition(cameraPos);
-                m_camera.lookAt(lookTarget);
+                // Camera stays at keyframe 4 position and looks at missile (doesn't follow)
+                const auto& keyframe4 = m_config.cameraKeyframes[4];
+                m_camera.setPosition(keyframe4.position);
+                m_camera.lookAt(m_missilePosition);  // Look directly at missile
             }
         }
     }
